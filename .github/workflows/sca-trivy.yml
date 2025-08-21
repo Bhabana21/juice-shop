@@ -1,0 +1,44 @@
+name: SCA - Trivy Dependency Scan
+
+on:
+  workflow_dispatch:          # allows manual trigger
+  push:
+    branches: [ main ]       # triggers on push
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  trivy_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Trivy SCA Scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: './trivy-dependencies.sarif'
+          vuln-type: 'library'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: List files (debug)
+        run: ls -la
+
+      - name: Upload Trivy SCA Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-sca-report
+          path: ./trivy-dependencies.sarif
