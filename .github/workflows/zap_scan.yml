@@ -1,9 +1,9 @@
-name: ZAP Baseline Scan with HTML Report
+name: ZAP Baseline Scan
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # manual trigger
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]  # optional
 
 jobs:
   zap_scan:
@@ -16,16 +16,4 @@ jobs:
           target: https://preview.owasp-juice.shop
           cmd_options: "-a -j"
           artifact_name: "zap-scan-${{ github.run_id }}"
-
-      - name: Convert JSON to HTML Report
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/zap/wrk \
-            owasp/zap2docker-stable zap-api-scan.py \
-            -J zap_out.json \
-            -O zap_report.html
-
-      - name: Upload HTML Report as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-html-report-${{ github.run_id }}
-          path: zap_report.html
+          create_issue: false   # Disable automatic GitHub issues
