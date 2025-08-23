@@ -34,6 +34,9 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: security-extended   # Uses GitHub’s extended security rules
+  
+     - name: Install dependencies
+       run: npm install
 
       # Step 3: Build project (optional for Juice Shop)
       # Juice Shop doesn’t need a custom build; CodeQL autobuild works fine
