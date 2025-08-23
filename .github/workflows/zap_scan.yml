@@ -3,7 +3,7 @@ name: ZAP Baseline Scan
 on:
   workflow_dispatch:  # manual trigger
   push:
-    branches: [ "main" ]  # optional
+    branches: ["main"]  # optional
 
 jobs:
   zap_scan:
@@ -16,4 +16,4 @@ jobs:
           target: https://preview.owasp-juice.shop
           cmd_options: "-a -j"
           artifact_name: "zap-scan-${{ github.run_id }}"
-          create_issue: false   # Disable automatic GitHub issues
+          create_issue: false
