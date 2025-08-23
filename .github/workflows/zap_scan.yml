@@ -16,4 +16,4 @@ jobs:
           target: https://preview.owasp-juice.shop
           cmd_options: "-a -j"
           artifact_name: "zap-scan-${{ github.run_id }}"
-          create_issue: false
+          allow_issue_writing: false   # Correct input to disable GitHub issues
