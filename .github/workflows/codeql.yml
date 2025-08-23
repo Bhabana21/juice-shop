@@ -1,0 +1,47 @@
+name: "CodeQL Security Scan"
+
+# When to trigger the workflow
+on:
+  push:
+    branches: [ "main" ]          # Runs scan whenever code is pushed to main
+  pull_request:
+    branches: [ "main" ]          # Runs scan for PRs targeting main
+  workflow_dispatch:              # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  analyze:
+    name: CodeQL Analyze (JavaScript / TypeScript)
+    runs-on: ubuntu-latest        # Runner environment
+
+    permissions:
+      actions: read               # Required for accessing actions
+      contents: read              # Read repository code
+      security-events: write      # Required to upload results to GitHub Security tab
+
+    strategy:
+      fail-fast: false            # Don't stop other scans if one fails
+      matrix:
+        language: [ 'javascript-typescript' ]  # Juice Shop uses Node + Angular only
+
+    steps:
+      # Step 1: Checkout repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Initialize CodeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended   # Uses GitHub’s extended security rules
+
+      # Step 3: Build project (optional for Juice Shop)
+      # Juice Shop doesn’t need a custom build; CodeQL autobuild works fine
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      # Step 4: Run CodeQL Analysis
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
