@@ -1,50 +1,47 @@
-name: "CodeQL Security Scan"
+name: "CodeQL Scan - Juice Shop"
 
-# When to trigger the workflow
 on:
   push:
-    branches: [ "main" ]          # Runs scan whenever code is pushed to main
+    branches: [ "main" ]   # Change to "master" if your default branch is master
   pull_request:
-    branches: [ "main" ]          # Runs scan for PRs targeting main
-  workflow_dispatch:              # Allows manual trigger from GitHub Actions tab
+    branches: [ "main" ]
+  workflow_dispatch:       # Allows manual trigger
 
 jobs:
   analyze:
     name: CodeQL Analyze (JavaScript / TypeScript)
-    runs-on: ubuntu-latest        # Runner environment
+    runs-on: ubuntu-latest
 
     permissions:
-      actions: read               # Required for accessing actions
-      contents: read              # Read repository code
-      security-events: write      # Required to upload results to GitHub Security tab
+      actions: read
+      contents: read
+      security-events: write
 
     strategy:
-      fail-fast: false            # Don't stop other scans if one fails
+      fail-fast: false
       matrix:
-        language: [ 'javascript-typescript' ]  # Juice Shop uses Node + Angular only
+        language: [ 'javascript-typescript' ]
 
     steps:
-      # Step 1: Checkout repository code
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Initialize CodeQL
+      # Step 2: Install dependencies to fix nyc & test errors
+      - name: Install dependencies
+        run: npm install
+
+      # Step 3: Initialize CodeQL
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          queries: security-extended   # Uses GitHub’s extended security rules
-  
-     - name: Install dependencies
-       run: npm install
+          queries: security-extended
 
-      # Step 3: Build project (optional for Juice Shop)
-      # Juice Shop doesn’t need a custom build; CodeQL autobuild works fine
+      # Step 4: Autobuild
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
 
-      # Step 4: Run CodeQL Analysis
+      # Step 5: Perform CodeQL Analysis
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{ matrix.language }}"
