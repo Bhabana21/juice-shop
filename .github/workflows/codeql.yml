@@ -1,10 +1,6 @@
 name: "CodeQL Scan - Juice Shop"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -41,19 +37,24 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          output: results.sarif
+          category: "/language:${{matrix.language}}"
+          output: ./codeql-results
 
+      # Set up Python for SARIF conversion
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # Install SARIF tools before converting
       - name: Install SARIF Tools
         run: pip install sarif-tools
 
+      # Convert SARIF → CSV using correct path
       - name: Convert SARIF to CSV
-        run: python -m sarif_tools csv results.sarif > results.csv
+        run: python -m sarif_tools csv ./codeql-results/${{ matrix.language }}.sarif > results.csv
 
+      # Upload CSV as an artifact
       - name: Upload CSV Report
         uses: actions/upload-artifact@v4
         with:
