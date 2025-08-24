@@ -43,16 +43,18 @@ jobs:
           output: ./codeql-results
 
       - name: Setup Python
+        id: setup-python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
       - name: Convert SARIF to CSV
+        shell: bash
         run: |
-          # Ensure pip is upgraded and sarif-tools installed in the same Python environment
-          python -m pip install --upgrade pip sarif-tools
-          # Convert SARIF to CSV
-          python -m sarif_tools csv ./codeql-results/${{ matrix.language }}.sarif > results.csv
+          # Install sarif-tools using the same Python from setup-python
+          ${{ steps.setup-python.outputs.python-location }}/bin/python -m pip install --upgrade pip sarif-tools
+          # Convert SARIF → CSV
+          ${{ steps.setup-python.outputs.python-location }}/bin/python -m sarif_tools csv ./codeql-results/${{ matrix.language }}.sarif > results.csv
 
       - name: Upload CSV Report
         uses: actions/upload-artifact@v4
