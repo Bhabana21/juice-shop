@@ -45,3 +45,11 @@ jobs:
       # Step 5: Perform CodeQL Analysis
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          output: results.sarif
+
+      - name: Upload CodeQL Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-results
+          path: results.sarif
