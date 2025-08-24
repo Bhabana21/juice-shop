@@ -52,7 +52,7 @@ jobs:
         run: pip install sarif-tools
 
       - name: Convert SARIF to CSV
-        run: sarif-tools csv results.sarif > results.csv
+        run: python -m sarif_tools csv results.sarif > results.csv
 
       - name: Upload CSV Report
         uses: actions/upload-artifact@v4
