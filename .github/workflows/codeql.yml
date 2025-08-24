@@ -2,10 +2,10 @@ name: "CodeQL Scan - Juice Shop"
 
 on:
   push:
-    branches: [ "main" ]   # Change to "master" if your default branch is master
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch:       # Allows manual trigger
+  workflow_dispatch:
 
 jobs:
   analyze:
@@ -23,41 +23,39 @@ jobs:
         language: [ 'javascript-typescript' ]
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install dependencies to fix nyc & test errors
       - name: Install dependencies
         run: npm install
 
-      # Step 3: Initialize CodeQL
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
 
-      # Step 4: Autobuild
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
 
-      # Step 5: Perform CodeQL Analysis
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           output: results.sarif
-      
-      # Step 6: Convert SARIF to CSV
-      - name: Convert SARIF to CSV
-        run: |
-          pip install sarif-tools
-          sarif-tools csv results.sarif > results.csv
 
-      # Step 7: Upload CSV as Artifact
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install SARIF Tools
+        run: pip install sarif-tools
+
+      - name: Convert SARIF to CSV
+        run: sarif-tools csv results.sarif > results.csv
+
       - name: Upload CSV Report
         uses: actions/upload-artifact@v4
         with:
           name: codeql-results-csv
           path: results.csv
-          
