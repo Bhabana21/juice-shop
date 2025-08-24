@@ -40,21 +40,11 @@ jobs:
           category: "/language:${{matrix.language}}"
           output: ./codeql-results
 
-      # Set up Python for SARIF conversion
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      # Install SARIF tools before converting
-      - name: Install SARIF Tools
-        run: pip install sarif-tools
-
-      # Convert SARIF → CSV using correct path
       - name: Convert SARIF to CSV
-        run: python -m sarif_tools csv ./codeql-results/${{ matrix.language }}.sarif > results.csv
+        run: |
+          python -m pip install --upgrade pip sarif-tools
+          python -m sarif_tools csv ./codeql-results/${{ matrix.language }}.sarif > results.csv
 
-      # Upload CSV as an artifact
       - name: Upload CSV Report
         uses: actions/upload-artifact@v4
         with:
