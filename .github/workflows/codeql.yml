@@ -47,9 +47,17 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           output: results.sarif
+      
+      # Step 6: Convert SARIF to CSV
+      - name: Convert SARIF to CSV
+        run: |
+          pip install sarif-tools
+          sarif-tools csv results.sarif > results.csv
 
-      - name: Upload CodeQL Report
+      # Step 7: Upload CSV as Artifact
+      - name: Upload CSV Report
         uses: actions/upload-artifact@v4
         with:
-          name: codeql-results
-          path: results.sarif
+          name: codeql-results-csv
+          path: results.csv
+          
