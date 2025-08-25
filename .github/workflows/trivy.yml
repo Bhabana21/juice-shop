@@ -37,21 +37,9 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
 
-      # Step 4: Install Trivy CLI (needed for CSV export)
-      - name: Install Trivy CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.65.0/trivy_0.65.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.65.0_Linux-64bit.deb
-
-      # Step 5: Generate CSV report (built-in CSV format)
-      - name: Generate Trivy CSV
-        run: trivy fs --format csv -o trivy-results.csv .
-
-      # Step 6: Upload CSV report as artifact
-      - name: Upload CSV Report
+      # Step 4: Upload SARIF as downloadable artifact
+      - name: Upload SARIF Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-results-csv
-          path: trivy-results.csv
+          name: trivy-sca-sarif
+          path: trivy-results.sarif
