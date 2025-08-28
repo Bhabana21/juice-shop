@@ -3,7 +3,7 @@ update_configs:
   - package_manager: "javascript"
     directory: "/"
     update_schedule: "live"
-    target_branch: "develop"
+    target_branch: "main"
     default_reviewers:
       - "bkimminich"
     default_labels:
@@ -24,7 +24,7 @@ update_configs:
   - package_manager: "javascript"
     directory: "/frontend"
     update_schedule: "live"
-    target_branch: "develop"
+    target_branch: "main"
     default_reviewers:
       - "bkimminich"
     default_labels:
